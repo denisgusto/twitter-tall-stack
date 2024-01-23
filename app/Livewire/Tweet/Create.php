@@ -12,9 +12,13 @@ class Create extends Component
 
     public ?string $body = null;
 
-    public function tweet()
+    public function tweet(): void
     {
         $this->authorize('create', Tweet::class);
+
+        $this->validate([
+            'body' => 'required'
+        ]);
 
         Tweet::create([
             'body' => $this->body,
