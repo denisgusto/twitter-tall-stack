@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Tweet;
+namespace App\Http\Livewire\Tweet;
 
 use App\Models\Tweet;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
