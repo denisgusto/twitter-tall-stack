@@ -20,12 +20,13 @@ class Create extends Component
             'body' => 'required|max:140'
         ]);
 
-        Tweet::create([
+        Tweet::query()->create([
             'body' => $this->body,
             'created_by' => auth()->id()
         ]);
 
         $this->emit('tweet::created');
+        $this->reset('body');
     }
 
     public function render()

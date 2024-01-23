@@ -1,27 +1,28 @@
 <?php
 
-use App\Http\Livewire\Tweet\Create as TweetCreate;
-use App\Models\Tweet;
 use App\Models\User;
+use App\Models\Tweet;
 use App\Http\Livewire\Timeline;
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Livewire\livewire;
+use function Pest\Laravel\assertDatabaseCount;
+use App\Http\Livewire\Tweet\Create as TweetCreate;
 
-it('should be able to create a tweet', function () {
+it('should be able to create a tweet', function ($tweet) {
     $user = User::factory()->create();
     actingAs($user);
 
     livewire(TweetCreate::class)
-        ->set('body', 'This is my first tweet')
+        ->set('body', $tweet)
         ->call('tweet')
         ->assertEmitted('tweet::created');
 
     assertDatabaseCount('tweets', 1);
     expect(Tweet::first())
-        ->body->toBe('This is my first tweet')
+        ->body->toBe($tweet)
         ->created_by->toBe($user->id);
-});
+})
+    ->with(['This is my first tweet', 'This is my second tweet', 'This is my third tweet']);
 
 it('should make sure that only authenticated users can tweet', function () {
     livewire(TweetCreate::class)
@@ -71,4 +72,14 @@ it('should show the tweet on the timeline', function () {
 
     livewire(Timeline::class)
         ->assertSee('This is my first tweet');
+});
+
+it('should set body as null after tweeting', function () {
+    actingAs(User::factory()->create());
+
+    livewire(TweetCreate::class)
+        ->set('body', 'This is my first tweet')
+        ->call('tweet')
+        ->assertEmitted('tweet::created')
+        ->assertSet('body', null);
 });
